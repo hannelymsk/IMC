@@ -1,57 +1,57 @@
 package com.example.imc;
 
 import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText etPeso, etAltura;
-    TextView tvResultado;
+    private EditText editAltura, editPeso;
+    private Button btnCalcular;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        etPeso = findViewById(R.id.etPeso);
-        etAltura = findViewById(R.id.etAltura);
-        tvResultado = findViewById(R.id.tvResultado);
-        Button btnCalcular = findViewById(R.id.btnCalcular);
+        editAltura = findViewById(R.id.editAltura);
+        editPeso = findViewById(R.id.editPeso);
+        btnCalcular = findViewById(R.id.btnCalcular);
 
         btnCalcular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pesoStr = etPeso.getText().toString();
-                String alturaStr = etAltura.getText().toString();
-
-                if (pesoStr.isEmpty() || alturaStr.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Informe peso e altura", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                float peso = Float.parseFloat(pesoStr);
-                float altura = Float.parseFloat(alturaStr);
-
-                float imc = peso / (altura * altura);
-
-                String resultado = String.format("IMC: %.2f - %s", imc, classificaIMC(imc));
-                tvResultado.setText(resultado);
+                enviarDados();
             }
         });
     }
 
-    private String classificaIMC(float imc) {
-        if (imc < 18.5f) return "Abaixo do peso";
-        else if (imc < 24.9f) return "Peso normal";
-        else if (imc < 29.9f) return "Sobrepeso";
-        else if (imc < 34.9f) return "Obesidade grau I";
-        else if (imc < 39.9f) return "Obesidade grau II";
-        else return "Obesidade grau III";
+    private void enviarDados() {
+        String alturaStr = editAltura.getText().toString();
+        String pesoStr = editPeso.getText().toString();
+
+        if(alturaStr.isEmpty() || pesoStr.isEmpty()){
+            Toast.makeText(this, "Preencha todos os campos primeiro!", Toast.LENGTH_SHORT).show();
+                return;
+        }
+
+        float altura = Float.parseFloat(alturaStr);
+        float peso = Float.parseFloat(pesoStr);
+
+        Intent intent = new Intent(this, ResultadoActivity.class);
+        intent.putExtra("altura", altura);
+        intent.putExtra("peso", peso);
+        startActivity(intent);
     }
 }
